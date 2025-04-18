@@ -4,13 +4,13 @@ import net.minecraft.resources.ResourceLocation
 
 abstract class AbstractCounterManager {
     abstract val counters: Map<CounterType, Counter>
-    fun getCounter(counterType: CounterType): Counter {
+    fun getCounter(counterType: CounterType): Counter? {
         return counters[counterType]
-            ?: throw Error("${counterType.type} was not registered with the CounterRegistry before ")
+            //?: throw Error("${counterType.type} was not registered with the CounterRegistry before ")
     }
 
     fun getStreak(counterType: CounterType): Streak {
-        return getCounter(counterType).streak
+        return getCounter(counterType)?.streak ?: Streak()
     }
 
     fun getStreakCount(counterType: CounterType, species: ResourceLocation? = null, form: String? = null): Int {
@@ -21,7 +21,7 @@ abstract class AbstractCounterManager {
     }
 
     fun getCount(counterType: CounterType, species: ResourceLocation? = null, form: String? = null): Int {
-        val speciesRecord = getCounter(counterType).count[species] ?: return 0
+        val speciesRecord = getCounter(counterType)?.count[species] ?: return 0
         if (form === null) return speciesRecord.values.fold(0) { acc, element -> acc + element }
         return speciesRecord.getOrDefault(form, 0)
     }
